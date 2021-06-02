@@ -1,28 +1,29 @@
 import os
-import torch
-import torchvision
-from torchvision import datasets, transforms, utils, models
-from torch.utils.data import DataLoader, Dataset, random_split
 import pandas as pd
 from PIL import Image
 from glob import glob
 import random
 import numpy as np
+import torch
+import torchvision
+from torchvision import datasets, transforms, utils, models
+from torch.utils.data import DataLoader, Dataset, random_split
+
 
 
 class SteatosisDatasets(Dataset):
-    def __init__(self, imgs_dir, labels, seed=0, train=True, test=0.2):
+    def __init__(self, imgs_dir, labels, seed=0, train=True, testdata_percents=0.2, img_size=(224,224),mean,std):
         self.train = train
         self.imgs_dir = imgs_dir
         self.wsi_ids = os.listdir(imgs_dir)
         self.wsi_dirs = glob(imgs_dir+'*')
         self.labels_df = pd.read_excel(labels).set_index('HE_ID')
-        self.test = test
+        self.test = testdata_percents
         self.seed = seed
         self.train_ids, self.test_ids = self.split_dataset()
-        self.size = (224, 224)
-        self.mean = [0.83715063, 0.5981852, 0.8515712]
-        self.std = [0.14065841, 0.28337505, 0.116401985]
+        self.size = img_size
+        self.mean = mean
+        self.std = std
 
     def split_dataset(self):
         train_ids = self.wsi_ids
@@ -105,18 +106,17 @@ class SteatosisDatasets(Dataset):
 
 if __name__ == '__main__':
     # mean,std = dataset.regularization()
-    image_datasets = SteatosisDatasets('/home/lisj/Documents/split_images/5x_splitimages/',
-                                       '/home/lisj/Documents/split_images/corresbonding_labels.xlsx',
+    dirname = ''
+    label_excel = ''
+    image_datasets = SteatosisDatasets(dirname,
+                                       label_excel,
                                        seed=0, train=True)
     n_val = int(len(image_datasets) * 0.25)
     n_train = len(image_datasets) - n_val
     train, val = random_split(image_datasets, [n_train, n_val])
     train_dataloader = DataLoader(
         dataset=train, batch_size=16, num_workers=8, shuffle=True,pin_memory=True)
-    print(image_datasets[0])
     val_dataloader = DataLoader(
         dataset=val, batch_size=16, num_workers=8, shuffle=True,pin_memory=True)
-    for i in train_dataloader:
-        print(i)
-        break
+
 
