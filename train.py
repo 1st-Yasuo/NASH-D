@@ -56,22 +56,6 @@ def get_args():
     return parser.parse_args()
 
 
-def get_dataset(data_dir, val_percent=0.25, batch_size=16, num_workers=8, shuffle=True):
-    image_datasets = SteatosisDatasets('/home/lisj/Documents/split_images/5x_splitimages/',
-                                '/home/lisj/Documents/split_images/corresbonding_labels.xlsx',
-                                seed=0,train=True)
-    n_val = int(len(image_datasets) * val_percent)
-    n_train = len(image_datasets) - n_val
-    train, val = random_split(image_datasets, [n_train, n_val])
-    # print(image_datasets.class_to_idx)
-    train_dataloader = DataLoader(
-        dataset=train, batch_size=batch_size, num_workers=num_workers, shuffle=shuffle)
-    val_dataloader = DataLoader(
-        dataset=val, batch_size=batch_size, num_workers=num_workers, shuffle=shuffle)
-    
-    return train_dataloader, val_dataloader
-
-
 def model():
     model = models.resnet50(pretrained=True)
     model.fc = nn.Sequential(nn.Linear(2048, 1000), nn.Linear(1000, 4))
