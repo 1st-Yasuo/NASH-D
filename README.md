@@ -1,2 +1,2 @@
-# liver-steatosis-diagnosis
-Based on CNN and classifier to predict course of liver steatosis.
+# An deep learning enabled NASH biopsy diagnosis system
+
