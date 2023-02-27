@@ -1,2 +1,2 @@
-# An deep learning enabled NASH biopsy diagnosis system
+# Deep learning enabled NASH biopsy diagnosis system
 
